@@ -8,11 +8,11 @@ var intro;
 var orderContainer;
 var menuContainer;
 var buttonelem;
-var delay=8000;
+var delay=500;
 var synth;
 
 var response = [
-[/*	Welcome strings	*/	"Hi Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
+[/*	Welcome strings	*/	"Hi, Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi, I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
 [/*	Menu strings	*/ 	"Sure, Here is the menu. Please use speak button to order.", "My pleasure, Please have a look at menu.", "I'm delighted to present our delicious offerings.", "Sure, Here are the available items."],
 [/*	Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice", "That is our special. I'm sure you are going to love it"],
 [/*	Info strings	*/ 	"Sure here is some more information."],
@@ -34,7 +34,6 @@ function onLoad(){
     
     orderContainer.style.visibility = 'hidden';
     menuContainer.style.visibility = 'hidden';
-	buttonelem.disabled = true;
 
     synth = window.speechSynthesis;
     
@@ -97,10 +96,6 @@ function onLoad(){
 	initTable();
 	//speak("Hi! Welcome to Bob Evans – the finest and freshest food! To begin press the speak button and ask for our menu.");
 	randomSpeak(0);
-	setTimeout(function() {
-		buttonelem.disabled = false;
-	}, delay);	
-
 }
     
 
@@ -132,11 +127,38 @@ function speak(text) {
     utterText.pitch = 1.1; // 0 to 2
     utterText.rate = 0.7; // 0.1 t0 10
     utterText.volume = 1 // range 0 to 1
+    
 	utterText.onend = function() {
+        console.log("onend() called");
 		buttonelem.disabled = false;
 	};
+    utterText.onstart = function() {
+        buttonelem.disabled = true;
+        console.log("onstart() called");
+	};
+    var i = 0;
+    var wc = WordCount(text);
+    var words = text.split(" ");
+    
+    utterText.onboundary = function() {
+        if(i<wc) {
+            interimSpan.innerHTML= interimSpan.innerHTML+" " + words[i];
+            i++;
+        }
+	};
+    
+    setTimeout(function() {
+        console.log("timeout() called");
+		buttonelem.disabled = false;
+	}, delay * wc);
+    
+    console.log("utterance", utterText); 
     synth.speak(utterText);
-    interimSpan.innerHTML=text;
+    
+}
+
+function WordCount(str) { 
+  return str.split(" ").length;
 }
 
 var orderId = 0;
@@ -229,7 +251,7 @@ function sendText(text) {
         else {
             //speak("I'm sorry I couldn't get that! Can you repeat it?");
 			randomSpeak(5);
-            speak(reply['message']);
+            //speak(reply['message']);
         }
     };
     console.log(data);
@@ -308,20 +330,29 @@ var OrdersDisplayed = false;
 function ShowOrders(id, orderReply) {
     intro.style.visibility = 'hidden';
     randomSpeak(id);
-    //speak("I have taken down that order. What else would you like to have?");
     OrdersDisplayed = true;
     orderContainer.style.visibility = 'visible';
+        
     for(var key in orderReply) {
         var rowPos = orderTable.rows.length;
-        var row = orderTable.insertRow(rowPos);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
+        var done = false;
+        for(i=1;!done && i<rowPos;i++) {
+            if(key == orderTable.rows[i].cells[1].innerHTML) {
+                orderTable.rows[i].cells[2].innerHTML = Number(orderTable.rows[i].cells[2].innerHTML) + Number(orderReply[key]);
+                done = true;
+            }
+        }
+        if(!done) {
+            console.log("first time");
+            var row = orderTable.insertRow(rowPos);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
 
-        cell1.innerHTML = rowPos;
-        cell2.innerHTML = key;
-       // console.log("->"+orderReply);
-        cell3.innerHTML = orderReply[key];
+            cell1.innerHTML = rowPos;
+            cell2.innerHTML = key;
+            cell3.innerHTML = orderReply[key];
+        }
     }
 }
 
