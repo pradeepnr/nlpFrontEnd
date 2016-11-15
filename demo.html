@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="code.js"></script>
+    <title>Ratatouille - Food ordering assistant</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body background="icons\theme.jpg" onload="onLoad()">  
+    <div class="container">
+            <div class="container-fluid" style="height:600px">
+                <div id="spacediv" class="col-md-6">
+                    <!--<div class="jumbotron" style="height:600px">-->
+                        <img src="icons\logo.png" />
+						<img src="icons\sample_food.jpg" height=332 width=500>
+                        
+                    <!--</div>-->
+                </div>
+				
+                <div id="mainContainer" class="col-md-6"  style="height:300px;position:relative;">
+					<article id="intro" style="height:300px;position:absolute;top: 5px;left: 0px;">
+						<h1> <center> About us </center></h1>
+						Bob Evans Farms is a brand born and raised on the promise of farm-fresh goodness. For more than 60 years, we've been providing farm-fresh foods to our restaurant guests. Today, Bob Evans Farms, LLC. owns and operates more than 500 full-service Bob Evans restaurants. Our success is built on the basics: high-quality food and heartfelt hospitality. In the words of our founder, “Everybody is somebody at Bob Evans.” This foundation, along with our product development and consumer research, is at the heart of our continued growth. We invite you to join us for a meal as we bring the values of the farm to the table by providing, flavorful meals at our place.
+
+						<h1> <center> About Ratatouille </center></h1>
+						Ratatouille is our endevour to make ordering food at Bob Evans even more friendly and enjoyable. We know that many of you love us equally and it will be unfair to give any one of you less importance. So we brought to you this new experience where you can talk to the assistant right at your table. Now enjoy pleasurable dining experience with our personalized attention.
+					</article>
+                    <div class="table-responsive">
+                        <table id="menu" class="table table-striped" style="height:300px;position:absolute;top: 0px;left: 0px;">
+                            <caption><h2><center>Menu</center></h2></caption>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Item Name</th>
+                                    <th>price</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <table id="orders" class="table table-striped" style="height:200px;position:absolute; top: 350px; overflow-y:scroll; display:block;">
+                            <caption><h2><center>Order List</center></h2></caption>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Item Name</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+        </div>
+		<div class="row" id="results">
+							<center>
+                            <span class="final" id="final_span"></span> <span class="interim" id="interim_span"></span>
+							</center>
+        </div>
+        <div class="row" style="padding-top:1cm">
+            <input type="button" id="TalkTo" onclick="toggleButton()" class="btn btn-primary btn-block" value="Speak"/>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
