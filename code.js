@@ -26,6 +26,8 @@ function randomSpeak(index) {
 	speak(response[index][str_idx]);
 }
 
+var resetBtn = false;
+
 function onLoad(){
     orderContainer = document.getElementById("orders");
     menuContainer = document.getElementById("menu");
@@ -38,8 +40,8 @@ function onLoad(){
     synth = window.speechSynthesis;
     
     if (!('webkitSpeechRecognition' in window)) {
-  upgrade();
-} else {
+        upgrade();
+    } else {
     recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -71,6 +73,8 @@ function onLoad(){
   };
 
   recognition.onresult = function(event) {
+   // console.log("onresult");
+    resetBtn = false;
     //var interim_transcript = '';
     if (typeof(event.results) == 'undefined') {
         recognition.onend = null;
@@ -92,6 +96,25 @@ function onLoad(){
     //final_span.innerHTML = linebreak(final_transcript);
     //interim_span.innerHTML = linebreak(interim_transcript);
   };
+    
+    recognition.onaudiostart = function() {
+        console.log("onaudiostart");
+        resetBtn = true;
+    };
+    
+    recognition.onaudioend = function() {
+        
+        console.log("onaudioend");
+        if(true == resetBtn ) {
+            console.log("onaudioend did reset");
+            resetBtn = false;
+            resetStopBtn();
+        }
+        else {
+            console.log("onaudioend didn't reset");
+        }
+    };
+    
 }
 	initTable();
 	//speak("Hi! Welcome to Bob Evans – the finest and freshest food! To begin press the speak button and ask for our menu.");
@@ -120,7 +143,6 @@ const API_INIT = "https://scary-spirit-73076.herokuapp.com/ratatouille/init/";
 const API_SEND = "https://scary-spirit-73076.herokuapp.com/ratatouille/listen/";
 
 function speak(text) {
-	buttonelem.value = "Speak"
 	interimSpan.style.fontSize = "large";
     
     var utterText = new SpeechSynthesisUtterance(text);
@@ -128,7 +150,7 @@ function speak(text) {
     utterText.pitch = 1.1; // 0 to 2
     utterText.rate = 0.7; // 0.1 t0 10
     utterText.volume = 1 // range 0 to 1
-    
+    var disableBtnHack = true;
 	utterText.onend = function() {
         console.log("onend() called");
 		buttonelem.disabled = false;
@@ -147,11 +169,6 @@ function speak(text) {
             i++;
         }
 	};
-    
-    setTimeout(function() {
-        console.log("timeout() called");
-		buttonelem.disabled = false;
-	}, delay * wc);
     
     console.log("utterance", utterText); 
     synth.speak(utterText);
@@ -218,9 +235,11 @@ function sendText(text) {
     xhr.open('POST', API_SEND, true);
     xhr.onload = function () {
         // do something to response
-	   if(xhr.status == 200) {
-           var reply = JSON.parse(xhr.responseText);
-           stopListening();
+       var reply = JSON.parse(xhr.responseText);
+       console.log("Received Response from backend errorcode->"+reply['errorCode']);
+       stopListening();
+	   if(xhr.status == 200 && reply['errorCode'] == 200) {
+
            var id = reply['pre'];
            console.log("id->"+id);
            console.log("reply->"+reply['message']);
@@ -255,7 +274,7 @@ function sendText(text) {
             //speak(reply['message']);
         }
     };
-    console.log(data);
+    console.log("Request sent to server");
     xhr.send(data);
 }
 
@@ -374,6 +393,7 @@ function cancelOrders(id) {
 }
 
 function startListening() {
+    console.log("start listening");
     buttonelem.disabled = true;
     interimSpan.innerHTML="";
     animateListening();
@@ -381,10 +401,15 @@ function startListening() {
 }
 
 function stopListening() {
+    console.log("stop listening");
     recognition.stop();
+    resetStopBtn();
+}
+
+function resetStopBtn() {
+    buttonelem.disabled = false;
     clearInterval(listenAni);
     interimSpan.innerHTML="";
-    //TalkToBtn.disabled = false;
     interimSpan.style.fontSize = "medium";
-    
+    buttonelem.value = "Speak"
 }
