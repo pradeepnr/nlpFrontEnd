@@ -12,11 +12,11 @@ var delay=500;
 var synth;
 
 var response = [
-[/*	Welcome strings	*/	"Hi, Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi, I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
-[/*	Menu strings	*/ 	"Sure, Here is the menu. Please use speak button to order.", "My pleasure, Please have a look at menu.", "I'm delighted to present our delicious offerings.", "Sure, Here are the available items."],
-[/*	Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice", "That is our special. I'm sure you are going to love it"],
+[/*	Welcome strings	*/	"Hi Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
+[/*	Menu strings	*/ 	"Sure, Menu is displayed above. Please use speak button to order.", "My pleasure, Please have a look at menu. Use the speak button to order.", "I'm delighted to present our delicious offerings. Use the speak button to order.", "Sure, the available items are displayed. Please use speak button to order."],
+[/*	Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
 [/*	Info strings	*/ 	"Sure here is some more information."],
-[/* Cancel Strings] */ "Your order has been cancelled."],
+[/*	Cancel Strings] */ 	"Your order has been cancelled."],
 [/*	Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"]
 ];
 
@@ -121,6 +121,7 @@ const API_SEND = "https://scary-spirit-73076.herokuapp.com/ratatouille/listen/";
 
 function speak(text) {
 	buttonelem.value = "Speak"
+	interimSpan.style.fontSize = "large";
     
     var utterText = new SpeechSynthesisUtterance(text);
     utterText.lang = 'en-US';
@@ -352,6 +353,7 @@ function ShowOrders(id, orderReply) {
             cell1.innerHTML = rowPos;
             cell2.innerHTML = key;
             cell3.innerHTML = orderReply[key];
+			cell3.align = 'center';
         }
     }
 }
@@ -379,7 +381,6 @@ function startListening() {
 }
 
 function stopListening() {
-    buttonelem.disabled = false;
     recognition.stop();
     clearInterval(listenAni);
     interimSpan.innerHTML="";
