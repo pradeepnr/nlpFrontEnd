@@ -219,13 +219,12 @@ function initTable() {
 //    speak("Hi! Welcome to Bob Evans – the finest and freshest food! To begin press the speak button and ask for our menu.");
 }
 
-var prevText="";
 function sendText(text) {
-    if(prevText == text || text=="" || orderId == 0) {
+    if(text=="" || orderId == 0) {
+        stopListening();
         return;
     }
     console.log(text);
-    prevText = text;
     var data = new FormData();
     console.log("orderID in sendText->"+orderId);
     data.append('orderId', orderId);
@@ -322,6 +321,7 @@ var menuDisplayed = false;
 
 function ShowMenu(id, menuReply) {
     if(menuDisplayed) {
+        resetStopBtn();
         return;
     }
 
@@ -379,6 +379,7 @@ function ShowOrders(id, orderReply) {
 
 function cancelOrders(id) {
     if(OrdersDisplayed == false) {
+        resetStopBtn();
         return;
     }
     intro.style.visibility = 'hidden';
