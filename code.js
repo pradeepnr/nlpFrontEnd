@@ -221,7 +221,7 @@ function initTable() {
 
 function sendText(text) {
     if(text=="" || orderId == 0) {
-        stopListening();
+        //stopListening();
         return;
     }
     console.log(text);
@@ -320,13 +320,14 @@ function toggleButton() {
 var menuDisplayed = false;
 
 function ShowMenu(id, menuReply) {
+	randomSpeak(id);
     if(menuDisplayed) {
         resetStopBtn();
         return;
     }
 
     intro.style.visibility = 'hidden';
-    randomSpeak(id);
+    
     menuDisplayed = true;
 
     menuContainer.style.visibility = 'visible';
