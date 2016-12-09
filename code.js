@@ -12,12 +12,19 @@ var delay=500;
 var synth;
 
 var response = [
-[/*	Welcome strings	*/	"Hi Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
-[/*	Menu strings	*/ 	"Sure, Menu is displayed above. Please use speak button to order.", "My pleasure, Please have a look at menu. Use the speak button to order.", "I'm delighted to present our delicious offerings. Use the speak button to order.", "Sure, the available items are displayed. Please use speak button to order."],
-[/*	Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
-[/*	Info strings	*/ 	"Sure here is some more information."],
-[/*	Cancel Strings] */ 	"Your order has been cancelled."],
-[/*	Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"]
+[/* 0	Welcome strings	*/	"Hi Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
+[/* 1	Menu strings	*/ 	"Sure, Menu is displayed above. Please use speak button to order.", "My pleasure, Please have a look at menu. Use the speak button to order.", "I'm delighted to present our delicious offerings. Use the speak button to order.", "Sure, the available items are displayed. Please use speak button to order."],
+[/*	2 Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
+[/*	3 Info strings	*/ 	"Sure here is some more information."],
+[/*	4 Cancel Strings] */ 	"Your order has been cancelled."],
+[/* 5 modify */ ""],
+[/* 6 show capability */ "Hi, I can guide you with available menu items and take your order. To begin just say show me the menu"],
+[/* 7 Bill order */ ""],
+[/* 8 Close order */ ""],
+[/* 9 generic */ ""],    
+[/* 10 Finalize Order */ "Your order is confirmed."],
+[/*	11 Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"],
+    
 ];
 
 function randomSpeak(index) {
@@ -28,7 +35,7 @@ function randomSpeak(index) {
 
 var resetBtn = false;
 
-function onLoad(){
+function onLoad() {
     orderContainer = document.getElementById("orders");
     menuContainer = document.getElementById("menu");
     intro = document.getElementById("intro");
@@ -91,6 +98,7 @@ function onLoad(){
     }  
     final_transcript = capitalize(final_transcript);
     console.log(final_transcript);
+    DisplayStr(final_transcript);
     sendText(final_transcript);
     final_transcript='';
     //final_span.innerHTML = linebreak(final_transcript);
@@ -143,8 +151,6 @@ const API_INIT = "https://scary-spirit-73076.herokuapp.com/ratatouille/init/";
 const API_SEND = "https://scary-spirit-73076.herokuapp.com/ratatouille/listen/";
 
 function speak(text) {
-	interimSpan.style.fontSize = "large";
-    
     var utterText = new SpeechSynthesisUtterance(text);
     utterText.lang = 'en-US';
     utterText.pitch = 1.1; // 0 to 2
@@ -165,7 +171,7 @@ function speak(text) {
     
     utterText.onboundary = function() {
         if(i<wc) {
-            interimSpan.innerHTML= interimSpan.innerHTML+" " + words[i];
+            DisplayStr(words[i]);
             i++;
         }
 	};
@@ -173,6 +179,13 @@ function speak(text) {
     console.log("utterance", utterText); 
     synth.speak(utterText);
     
+}
+
+function DisplayStr(str, clear=false) {
+    if(clear) {
+        interimSpan.innerHTML = "";
+    }
+    interimSpan.innerHTML= interimSpan.innerHTML+" " +str;
 }
 
 function WordCount(str) { 
@@ -200,10 +213,10 @@ function initTable() {
     start_timestamp = event.timeStamp;
     
     interimSpan = document.getElementById("interim_span");
-    //TalkToBtn = document.getElementById("TalkTo");
     orderTable = document.getElementById("orders");
     menuTable = document.getElementById("menu");
-    
+
+    interimSpan.style.fontSize = "large";
     var xhr = new XMLHttpRequest();
     xhr.open('POST', API_INIT, true);
     xhr.onload = function () {
@@ -253,18 +266,40 @@ function sendText(text) {
            else if(id==3) { // item info
                var str="Sure! here is some more information on";
 			   intro.style.visibility = 'hidden';
-               str.concat(reply['key']);
-               str.concat(". ");
-               str.concat(reply['value']);
+               var desc = reply['message'];
+               for(var key in desc) {
+                   str = str.concat(key);
+                   str = str.concat(". ");
+                   str = str.concat(desc[key]);
+               }
                speak(str);
            }
            else if(id==4) { // cancel order
-              //speak(reply['message']);
                cancelOrders(id);
+           }
+           else if(id==5) { // modify
+           
+           }
+           else if(id == 6) { // show capability
+               randomSpeak(id);
+               resetStopBtn();
+           }
+           else if(id == 7 ) { // Bill order
+               
+           }
+           else if(id == 8) { // close order
+               
+           }
+           else if(id == 9) { // generic
+               
+           }
+           else if(id==10) { // finalize order
+               randomSpeak(id);
+               resetStopBtn();
            }
            else {
             //speak("I'm sorry I couldn't get that! Can you repeat it?");
-			randomSpeak(5);
+			randomSpeak(11);
            }
 	   }
         else {
@@ -278,29 +313,23 @@ function sendText(text) {
 }
 
 function animateListening() {
-  //TalkToBtn.disabled = true;
   var pos = 0;
   listenAni = setInterval(frame, 500);
-  interimSpan.style.fontSize = "xx-large";
   function frame() {
       if(pos == 0) {
 		  buttonelem.value = "Listening";
-          //interimSpan.innerHTML="Listening";
           pos=1;
       }
       else if(pos == 1) {
 		  buttonelem.value = "Listening.";
-          //interimSpan.innerHTML="Listening.";
           pos=2;
       }
       else if(pos == 2) {
 		  buttonelem.value = "Listening..";
-          //interimSpan.innerHTML="Listening..";
           pos=3;
       }
       else {
  		  buttonelem.value = "Listening...";
-         //interimSpan.innerHTML="Listening...";
           pos=0
       }
   }
@@ -412,6 +441,5 @@ function resetStopBtn() {
     buttonelem.disabled = false;
     clearInterval(listenAni);
     interimSpan.innerHTML="";
-    interimSpan.style.fontSize = "medium";
     buttonelem.value = "Speak"
 }

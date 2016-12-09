@@ -20,16 +20,23 @@
   </head>
   <body background="icons\theme.jpg" onload="onLoad()">  
     <div class="container">
-            <div class="container-fluid" style="height:600px">
-                <div id="spacediv" class="col-md-6">
-                    <!--<div class="jumbotron" style="height:600px">-->
-                        <img src="icons\logo.png" />
-						<img src="icons\sample_food.jpg" height=332 width=500>
-                        
-                    <!--</div>-->
-                </div>
-				
-                <div id="mainContainer" class="col-md-6"  style="height:300px;position:relative;">
+        <div id="spacediv" class="col-md-6">
+            <div style="height:500px;">
+                <img src="icons\logo.png" />
+                <img src="icons\sample_food.jpg" height=332 width=500>
+            </div>
+            <div style="height:100px;">
+                <center>
+				    <span class="final" id="final_span"></span> <span class="interim" id="interim_span"></span>
+				</center>
+
+            </div>
+            <div style="height:50px;">
+                <input type="button" id="TalkTo" onclick="toggleButton()" class="btn btn-primary btn-block" value="Speak"/>
+            </div>     
+        </div>
+        <div id="spacediv" class="col-md-6">
+                <div id="mainContainer" style="height:300px;position:relative;">
 					<article id="intro" style="height:300px;position:absolute;top: 5px;left: 0px;">
 						<h1> <center> About us </center></h1>
 						Bob Evans Farms is a brand born and raised on the promise of farm-fresh goodness. For more than 60 years, we've been providing farm-fresh foods to our restaurant guests. Today, Bob Evans Farms, LLC. owns and operates more than 500 full-service Bob Evans restaurants. Our success is built on the basics: high-quality food and heartfelt hospitality. In the words of our founder, “Everybody is somebody at Bob Evans.” This foundation, along with our product development and consumer research, is at the heart of our continued growth. We invite you to join us for a meal as we bring the values of the farm to the table by providing, flavorful meals at our place.
@@ -60,16 +67,6 @@
                         </table>
                     </div>
                 </div>
-        </div>
-		<div class="row" id="results" style="height:50px;">
-			<div class="col-md-6">
-				<input type="button" id="TalkTo" onclick="toggleButton()" class="btn btn-primary btn-block" value="Speak"/>
-			</div>
-			<div class="col-md-6">
-				<center>
-				<span class="final" id="final_span"></span> <span class="interim" id="interim_span"></span>
-				</center>
-			</div>
         </div>
     </div>
 
