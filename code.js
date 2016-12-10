@@ -154,7 +154,7 @@ function speak(text) {
     var utterText = new SpeechSynthesisUtterance(text);
     utterText.lang = 'en-US';
     utterText.pitch = 1.1; // 0 to 2
-    utterText.rate = 0.7; // 0.1 t0 10
+    utterText.rate = 1.0; // 0.1 t0 10
     utterText.volume = 1 // range 0 to 1
     var disableBtnHack = true;
 	utterText.onend = function() {
@@ -345,21 +345,15 @@ function toggleButton() {
     }
 }
 
-
-var menuDisplayed = false;
-
 function ShowMenu(id, menuReply) {
 	randomSpeak(id);
-    if(menuDisplayed) {
-        resetStopBtn();
-        return;
-    }
-
     intro.style.visibility = 'hidden';
-    
-    menuDisplayed = true;
-
     menuContainer.style.visibility = 'visible';
+
+    var rowsToDel = menuTable.rows.length;
+    for(i=rowsToDel-1; i>=0; i--) {
+        menuTable.deleteRow(i);
+    }
     for(i=0; i<menuReply.length; i++) {
         var rowPos = menuTable.rows.length;
         var row = menuTable.insertRow(rowPos);
@@ -367,9 +361,8 @@ function ShowMenu(id, menuReply) {
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
 
-        cell1.innerHTML = rowPos;
+        cell1.innerHTML = i+1;
         cell2.innerHTML = menuReply[i];
-        console.log(menuReply[i]);
         cell3.innerHTML = '5$';    
     }
     
