@@ -24,7 +24,9 @@ var response = [
 [/* 9 generic */ ""],    
 [/* 10 Finalize Order */ "Your order is confirmed."],
 [/*	11 Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"],
-    
+[/* 12 Water */ " Sure, It will be served soon"],
+[/* 13 Restroom */ "It's on right end of the corridor"],
+[/* 14 salt */ "Sure, Salt and pepper will be got"]
 ];
 
 function randomSpeak(index) {
@@ -291,14 +293,25 @@ function sendText(text) {
                
            }
            else if(id == 9) { // generic
-               
+               var str = reply['message'];
+               var generic_id = id;
+               if(str.localeCompare('water') == 0) {
+                   generic_id += 3;
+               }
+               else if(str.localeCompare('restroom') == 0) {
+                   generic_id += 4;
+               }
+               else if(str.localeCompare('salt') == 0) {
+                   generic_id += 5;
+               }
+               randomSpeak(generic_id);
+               resetStopBtn();
            }
            else if(id==10) { // finalize order
                randomSpeak(id);
                resetStopBtn();
            }
            else {
-            //speak("I'm sorry I couldn't get that! Can you repeat it?");
 			randomSpeak(11);
            }
 	   }
