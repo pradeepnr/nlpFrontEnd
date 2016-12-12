@@ -14,20 +14,22 @@ var synth;
 var response = [
 [/* 0	Welcome strings	*/	"Hi Welcome to Bob Evans, The finest and freshest food. To begin press the speak button and ask for our menu.", "Hi I'm your food assistant today. Ask for menu whenever you are ready.", "Welcome to Bob Evans. I would be at your service. Just ask for the menu when you are ready."],
 [/* 1	Menu strings	*/ 	"Sure, Menu is displayed above. Please use speak button to order.", "My pleasure, Please have a look at menu. Use the speak button to order.", "I'm delighted to present our delicious offerings. Use the speak button to order.", "Sure, the available items are displayed. Please use speak button to order."],
-[/*	2 Order strings	*/ 	"I will take down that order. Can I serve with some more delicacies?", "That's a great choice. What else would you like to have?", "Excellent, Can I serve something else?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
+[/*	Order strings	*/ 	"I will take down that order. What other delicacies can I serve?", "That's a great choice. What else would you like to have?", "Excellent, What can I serve next?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
 [/*	3 Info strings	*/ 	"Sure here is some more information."],
-[/*	4 Cancel Strings] */ 	"Your order has been cancelled."],
+[/*	4 Cancel Confirmation	*/ 	"Are you sure you want to cancel the order? Please use speak button to confirm."],
 [/* 5 modify */ ""],
 [/* 6 show capability */ "Hi, I can guide you with available menu items and take your order. To begin just say show me the menu"],
 [/* 7 Bill order */ ""],
 [/* 8 Close order */ ""],
 [/* 9 generic */ ""],    
 [/* 10 Finalize Order */ "Your order is confirmed."],
-[/*	11 Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"],
+[/*	11 Cancel Strings] */ 	"Your order has been cancelled."],
 [/* 12 Water */ " Sure, It will be served soon"],
 [/* 13 Restroom */ "It's on right end of the corridor"],
-[/* 14 salt */ "Sure, Salt and pepper will be got"]
+[/* 14 salt */ "Sure, I'll request salt and pepper to be served on table"]
 ];
+
+response[100] = [/*	100 Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"]
 
 function randomSpeak(index) {
 	var arr_len = response[index].length;
@@ -276,8 +278,8 @@ function sendText(text) {
                }
                speak(str);
            }
-           else if(id==4) { // cancel order
-               cancelOrders(id);
+           else if(id==4) { // cancel order - request confirmation
+               cancelConfirmation(id);
            }
            else if(id==5) { // modify
            
@@ -311,13 +313,16 @@ function sendText(text) {
                randomSpeak(id);
                resetStopBtn();
            }
+           else if(id==11) { // cancel order - confirmed
+               cancelOrders(id);
+           }
            else {
-			randomSpeak(11);
+			randomSpeak(100);
            }
 	   }
         else {
             //speak("I'm sorry I couldn't get that! Can you repeat it?");
-			randomSpeak(5);
+			randomSpeak(100);
             //speak(reply['message']);
         }
     };
@@ -411,6 +416,10 @@ function ShowOrders(id, orderReply) {
 			cell3.align = 'center';
         }
     }
+}
+
+function cancelConfirmation(id) {
+    randomSpeak(id);
 }
 
 function cancelOrders(id) {
