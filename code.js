@@ -17,7 +17,7 @@ var response = [
 [/*	Order strings	*/ 	"I will take down that order. What other delicacies can I serve?", "That's a great choice. What else would you like to have?", "Excellent, What can I serve next?", "That is a fabulous choice! What more can I serve?", "That is our special. I'm sure you are going to love it"],
 [/*	3 Info strings	*/ 	"Sure here is some more information."],
 [/*	4 Cancel Confirmation	*/ 	"Are you sure you want to cancel the order? Please use speak button to confirm."],
-[/* 5 modify */ ""],
+[/* 5 modify */ "order is modified as per your requirement"],
 [/* 6 show capability */ "Hi, I can guide you with available menu items and take your order. To begin just say show me the menu"],
 [/* 7 Bill order */ ""],
 [/* 8 Close order */ ""],
@@ -26,7 +26,9 @@ var response = [
 [/*	11 Cancel Strings] */ 	"Your order has been cancelled."],
 [/* 12 Water */ " Sure, It will be served soon"],
 [/* 13 Restroom */ "It's on right end of the corridor"],
-[/* 14 salt */ "Sure, I'll request salt and pepper to be served on table"]
+[/* 14 salt */ "Sure, I'll request salt and pepper to be served on table"],
+[/* 15 grounding */ "ok"],
+[/* 16 empty */ ""]
 ];
 
 response[100] = [/*	100 Default strings	*/ 	"I'm sorry, I couldn't get that. Can you repeat it?", "My apologies, Can you repeat that last statement", "I'm afraid I couldn't get that last statement", "Unfortunately I couldn't get that last statement.", "I beg your pardon", "I'm not sure I follow. Can you repeat that?"]
@@ -103,8 +105,11 @@ function onLoad() {
     final_transcript = capitalize(final_transcript);
     console.log(final_transcript);
     DisplayStr(final_transcript);
-    sendText(final_transcript);
-    final_transcript='';
+    sleep(2000).then(() => {
+        sendText(final_transcript);
+        final_transcript='';
+    });
+
     //final_span.innerHTML = linebreak(final_transcript);
     //interim_span.innerHTML = linebreak(interim_transcript);
   };
@@ -282,7 +287,7 @@ function sendText(text) {
                cancelConfirmation(id);
            }
            else if(id==5) { // modify
-           
+            ShowOrders(id, reply['message']);
            }
            else if(id == 6) { // show capability
                randomSpeak(id);
@@ -314,7 +319,18 @@ function sendText(text) {
                resetStopBtn();
            }
            else if(id==11) { // cancel order - confirmed
-               cancelOrders(id);
+               if(reply['message'] == 1000) {
+                   cancelOrders(id);
+               }
+               else {
+                   randomSpeak(15);
+               }
+           }
+           else if(id==12) {
+               speak(reply['message']);
+           }
+           else if(id==13) {
+               removeOrderItem(reply['message']);
            }
            else {
 			randomSpeak(100);
@@ -399,7 +415,7 @@ function ShowOrders(id, orderReply) {
         var done = false;
         for(i=1;!done && i<rowPos;i++) {
             if(key == orderTable.rows[i].cells[1].innerHTML) {
-                orderTable.rows[i].cells[2].innerHTML = Number(orderTable.rows[i].cells[2].innerHTML) + Number(orderReply[key]);
+                orderTable.rows[i].cells[2].innerHTML = Number(orderReply[key]);
                 done = true;
             }
         }
@@ -414,6 +430,31 @@ function ShowOrders(id, orderReply) {
             cell2.innerHTML = key;
             cell3.innerHTML = orderReply[key];
 			cell3.align = 'center';
+        }
+    }
+}
+
+function removeOrderItem(item) {
+    console.log("remove order item->"+item)
+    var found = false;
+    var len = orderTable.rows.length;
+    var i=0
+    for(; !found && i<len; i++) {
+        console.log(orderTable.rows[i].cells[1]);
+        if(orderTable.rows[i].cells[1].innerHTML == item) {
+            found = true;
+            break;
+        }
+    }
+    if(found) {
+        if(len == 2) {
+            cancelOrders(16);
+        }else {
+            for(j=i+1;j<len;j++) {
+                var num = Number(orderTable.rows[j].cells[0].innerHTML);
+                orderTable.rows[j].cells[0].innerHTML = Number(num-1);
+            }
+            orderTable.deleteRow(i);
         }
     }
 }
@@ -457,4 +498,8 @@ function resetStopBtn() {
     clearInterval(listenAni);
     interimSpan.innerHTML="";
     buttonelem.value = "Speak"
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
